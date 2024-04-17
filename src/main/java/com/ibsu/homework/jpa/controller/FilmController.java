@@ -4,6 +4,7 @@ import com.ibsu.homework.jpa.dto.FilmDTO;
 import com.ibsu.homework.jpa.entity.Language;
 import com.ibsu.homework.jpa.repository.LanguageRepository;
 import com.ibsu.homework.jpa.service.FilmService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.InputMismatchException;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/v1/film", produces = {"application/json"})
@@ -26,7 +26,7 @@ public class FilmController {
     }
 
     @GetMapping("/search")
-    public List<FilmDTO> search(@RequestParam(name = "title", required = false) String title,
+    public Page<FilmDTO> search(@RequestParam(name = "title", required = false) String title,
                                 @RequestParam(name = "description", required = false) String description,
                                 @RequestParam(name = "year", required = false) Integer releaseYear,
                                 @RequestParam(name = "language", required = false) String language,
@@ -37,6 +37,6 @@ public class FilmController {
             language1 = languageRepository.findByNameIgnoreCase(language).orElseThrow(InputMismatchException::new);
         }
         Pageable pageable = PageRequest.of(page, size);
-        return filmService.searchFilms(title, description, releaseYear, language1, pageable).toList();
+        return filmService.searchFilms(title, description, releaseYear, language1, pageable);
     }
 }
